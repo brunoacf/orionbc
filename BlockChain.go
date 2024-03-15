@@ -75,8 +75,8 @@ func (bc *BlockChain) Append (c Cell) {
 func (bc *BlockChain) Display() {
 	block := bc.start
 	for block != nil {
-		fmt.Println( "Data: ", block.cell.getData() )
-        fmt.Printf( "Data hash: %x\n", block.cell.getDataHash() )
+		fmt.Println( "Data: ", block.cell.GetData() )
+        fmt.Printf( "Data hash: %x\n", block.cell.GetDataHash() )
 		fmt.Printf( "Prev hash: %x\n", block.cell.GetPrevHash() )
 
 		block = block.next
@@ -90,7 +90,7 @@ func (bc *BlockChain) validateChain() {
 	var firstHash [32]uint8
 	for block != nil {
 		fmt.Printf ( "Bloco %d\n", count )
-		fmt.Printf ( "Data hash: %x\n", block.cell.getDataHash() )
+		fmt.Printf ( "Data hash: %x\n", block.cell.GetDataHash() )
 		fmt.Printf ( "Prev hash: %x\n", block.cell.GetPrevHash() )
 		if (block.prev == nil) {
 			h = firstHash

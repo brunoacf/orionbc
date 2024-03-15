@@ -10,11 +10,11 @@ func main() {
     var c4 = Cell {}
     var c5 = Cell {}
     
-    c1.setData ("Data1")
-    c2.setData ("Data2")
-    c3.setData ("Data3")
-    c4.setData ("Data4")
-    c5.setData ("Data5")
+    c1.SetData ("Data1")
+    c2.SetData ("Data2")
+    c3.SetData ("Data3")
+    c4.SetData ("Data4")
+    c5.SetData ("Data5")
     
     bc.Append(c1)
     bc.Append(c2)
