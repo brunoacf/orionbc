@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
     bc := BlockChain{}
 
@@ -24,5 +26,25 @@ func main() {
 
     bc.validateChain()
 
+
+    var tr1 Transaction
+    tr1.SetId()
+    tr1.AddInput("0001", 1.6)
+    tr1.AddInput("0001", 1.2)
+    h1 := tr1.computeHash()
+
+    fmt.Printf("len=%d cap=%d %v\n", len(tr1.Inputs), cap(tr1.Inputs), tr1.Inputs)
+    fmt.Printf("Total Input: %f\n", tr1.SumInputs())
+    fmt.Printf("Transaction1 hash: %x\n", h1)
+
+    var tr2 Transaction
+    tr2.SetId()
+    tr2.AddInput("0001", 0.56)
+    tr2.AddInput("0001", 0.25)
+    h2 := tr2.computeHash()
+
+    fmt.Printf("len=%d cap=%d %v\n", len(tr2.Inputs), cap(tr2.Inputs), tr2.Inputs)
+    fmt.Printf("Total Input: %f\n", tr2.SumInputs())
+    fmt.Printf("Transaction2 hash: %x\n", h2)
 }
 
