@@ -64,9 +64,9 @@ type Transaction struct {
 
 
 // --------------------------------------------------------
-// SetId():
+// Init():
 // --------------------------------------------------------
-func (tr *Transaction) SetId () {
+func (tr *Transaction) Init () {
 	tr.Id = uuid.New().String()
 }
 
@@ -132,7 +132,7 @@ func (tr *Transaction) AddOutput (addr string, ammount float64) bool {
 
 
 // --------------------------------------------------------
-// SumOutputs()
+// SumInputs()
 // --------------------------------------------------------
 func (tr *Transaction) SumInputs () float64 {
 	sum := 0.0
@@ -155,12 +155,12 @@ func (tr *Transaction) SumOutputs () float64 {
 }
 
 // --------------------------------------------------------
-// Check for overdrowns
+// Check for overdraw
 // --------------------------------------------------------
 // Return: TRUE if overdrown detected
 //         FALSE if overdrown not detected
 // --------------------------------------------------------
-func (tr *Transaction) Overdrown () bool {
+func (tr *Transaction) Overdraw () bool {
 	in := tr.SumInputs()
 	out := tr.SumOutputs()
 	if out >= in {
@@ -203,8 +203,8 @@ func (tr *Transaction) checkOutputs() bool {
 // Validate(): Validation routine for transactions
 // --------------------------------------------------------
 func (tr *Transaction) Validate () bool {
-	if tr.Overdrown() {
-		// overdrown detected
+	if tr.Overdraw() {
+		// overdraw detected
 		return false
 	}
 	if ! tr.checkInputs() {
