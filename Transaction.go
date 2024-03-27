@@ -7,6 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// Note: Use go get github.com/google/uuid
+// before compile or run.
+
 // ========================================================
 // Basic structure to hold records of transactions
 // ========================================================
@@ -55,11 +58,13 @@ func (rec *Record) GetAmmount () float64 {
 // Structure of the transaction
 // ========================================================
 type Transaction struct {
-	Id      string
-	Inputs  []Record
-	Outputs []Record
-	Sigs    []string
-	ReqSigs []string
+	PrevHash [32]byte
+	Id       string
+	Inputs   []Record
+	Outputs  []Record
+	Sigs     []string
+	ReqSigs  []string
+	Hash     [32]byte
 }
 
 
@@ -88,9 +93,9 @@ func (tr *Transaction) Serialize (t *Transaction, buff *bytes.Buffer) {
 }
 
 
-// --------------------------------------------
-// computeHash(): Calcula o hash de uma celula
-// --------------------------------------------
+// --------------------------------------------------------
+// computeHash(): Compute transaction hash
+// --------------------------------------------------------
 func (tr *Transaction) computeHash () [32]uint8 {
 	// Serializa celula e calcula seu hash...
 	var buff bytes.Buffer

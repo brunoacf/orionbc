@@ -1,42 +1,33 @@
 package main
 
-import "crypto/sha256"
+//import "crypto/sha256"
 
 // -----------------------------------------
-// Cell: the basic unit of the blockchain
+// Transaction Cell: 
+// Contains the hash of the previous transaction,
+// the current transaction and the current hash.
 // -----------------------------------------
 type Cell struct {
     PrevHash [32]byte
-    Data string
-    DataHash [32]byte
+    //Data string
+    Trx Transaction
+    TxHash [32]byte
 }
 
-// -----------------------------------------
-// GetData(): return the content of Data field
-// -----------------------------------------
-func (c *Cell) GetData() string {
-    return c.Data
-}
-
-// -----------------------------------------
-// SetData(): set the Data field
-// -----------------------------------------
-func (c *Cell) SetData(d string) {
-    c.Data = d
-    c.ComputeDataHash()
-}
 
 // -----------------------------------------
 // Compute the hash of the Data field
 // -----------------------------------------
 func (c *Cell) ComputeDataHash () {
-    c.DataHash = sha256.Sum256( []byte(c.Data) )
+    //s := c.Tx.Serialize()
+    //c.TxHash = sha256.Sum256( []byte(c.Tx) )
+    c.TxHash = c.Trx.computeHash()
 }
 // -----------------------------------------
-// return the hash of Data field
+// return the hash of Transaction field
 // -----------------------------------------
-func (c *Cell) GetDataHash() [32]byte {
-    return c.DataHash
+func (c *Cell) GetTxHash() [32]byte {
+    return c.TxHash
 }
 
 // -----------------------------------------

@@ -24,6 +24,15 @@ type BlockChain struct {
 	end   *Block
 }
 
+
+func (bc *BlockChain) Init (trx Transaction) {
+	var c = Cell{}
+	c.Trx = trx
+	newBlock := &Block{cell: c}
+	bc.start = newBlock
+	bc.end = newBlock
+}
+
 func (bc *BlockChain) serializeCell (c Cell, buff *bytes.Buffer) {
 	// Cria o buffer o e encoder para a serialização
 	//var buff bytes.Buffer
@@ -75,9 +84,9 @@ func (bc *BlockChain) Append (c Cell) {
 func (bc *BlockChain) Display() {
 	block := bc.start
 	for block != nil {
-		fmt.Println( "Data: ", block.cell.GetData() )
-        fmt.Printf( "Data hash: %x\n", block.cell.GetDataHash() )
-		fmt.Printf( "Prev hash: %x\n", block.cell.GetPrevHash() )
+		fmt.Println( "Tx Id: ", block.cell.Trx.GetId() )
+        //fmt.Printf( "Data hash: %x\n", block.cell.GetDataHash() )
+		//fmt.Printf( "Prev hash: %x\n", block.cell.GetPrevHash() )
 
 		block = block.next
 	}
@@ -90,7 +99,7 @@ func (bc *BlockChain) validateChain() {
 	var firstHash [32]uint8
 	for block != nil {
 		fmt.Printf ( "Bloco %d\n", count )
-		fmt.Printf ( "Data hash: %x\n", block.cell.GetDataHash() )
+		fmt.Printf ( "Data hash: %x\n", block.cell.GetTxHash() )
 		fmt.Printf ( "Prev hash: %x\n", block.cell.GetPrevHash() )
 		if (block.prev == nil) {
 			h = firstHash
