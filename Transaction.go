@@ -162,25 +162,25 @@ func (tr *Transaction) SumOutputs () float64 {
 // --------------------------------------------------------
 // Check for overdraw
 // --------------------------------------------------------
-// Return: TRUE if overdrown detected
-//         FALSE if overdrown not detected
+// Return: TRUE if overdraw detected
+//         FALSE if overdraw not detected
 // --------------------------------------------------------
 func (tr *Transaction) Overdraw () bool {
 	in := tr.SumInputs()
 	out := tr.SumOutputs()
-	if out >= in {
+	if out > in {
 		// overdrown!
-		return false
-	} else {
-		// not overdrown
 		return true
+	} else {
+		// no overdrown
+		return false
 	}
 }
 
 // --------------------------------------------------------
 // checkInputs(): Search for 0 ou negative inputs
 // --------------------------------------------------------
-func (tr *Transaction) checkInputs() bool {
+func (tr *Transaction) CheckInputs() bool {
 	for _, v := range tr.Inputs {
 		if v.Ammount <= 0 {
 			return false
@@ -191,9 +191,9 @@ func (tr *Transaction) checkInputs() bool {
 
 
 // --------------------------------------------------------
-// checkInputs(): Search for 0 ou negative outputs
+// checkOutputs(): Search for 0 ou negative outputs
 // --------------------------------------------------------
-func (tr *Transaction) checkOutputs() bool {
+func (tr *Transaction) CheckOutputs() bool {
 	for _, v := range tr.Outputs {
 		if v.Ammount <= 0 {
 			return false
@@ -202,6 +202,16 @@ func (tr *Transaction) checkOutputs() bool {
 	return true
 }
 
+
+// --------------------------------------------------------
+// checkOutputs(): Search for 0 ou negative outputs
+// --------------------------------------------------------
+func (tr *Transaction) CheckSignatures() bool {
+	// TODO:
+	// Check signatures
+	// Check required signatures (escrow)
+	return true
+}
 
 
 // --------------------------------------------------------
@@ -212,16 +222,15 @@ func (tr *Transaction) Validate () bool {
 		// overdraw detected
 		return false
 	}
-	if ! tr.checkInputs() {
+	if ! tr.CheckInputs() {
 		return false
 	}
-	if ! tr.checkOutputs() {
+	if ! tr.CheckOutputs() {
 		return false
 	}
-
-	// TODO:
-	// Check signatures
-	// Check required signatures (escrow)
+	if ! tr.CheckSignatures() {
+		return false
+	}
 
 	return true
 }

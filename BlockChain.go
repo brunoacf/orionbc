@@ -92,7 +92,7 @@ func (bc *BlockChain) Display() {
 	}
 }
 
-func (bc *BlockChain) validateChain() {
+func (bc *BlockChain) Validate() {
 	block := bc.start
 	count := 1
 	var h [32]uint8
