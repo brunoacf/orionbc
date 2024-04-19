@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"crypto/sha256"
 	"encoding/gob"
 	"github.com/google/uuid"
@@ -64,7 +65,7 @@ type Transaction struct {
 	Outputs  []Record
 	Sigs     []string
 	ReqSigs  []string
-	Hash     [32]byte
+	//Hash     [32]byte
 }
 
 
@@ -217,20 +218,33 @@ func (tr *Transaction) CheckSignatures() bool {
 // --------------------------------------------------------
 // Validate(): Validation routine for transactions
 // --------------------------------------------------------
-func (tr *Transaction) Validate () bool {
+func (tr *Transaction) Validate () error {
 	if tr.Overdraw() {
-		// overdraw detected
-		return false
+		return errors.New("transaction overdrow")
 	}
 	if ! tr.CheckInputs() {
-		return false
+		return errors.New("transaction overdrow")
 	}
 	if ! tr.CheckOutputs() {
-		return false
+		return errors.New("transaction overdrow")
 	}
 	if ! tr.CheckSignatures() {
-		return false
+		return errors.New("transaction overdrow")
 	}
 
-	return true
+	return nil
+}
+
+// --------------------------------------------------------
+// Close(): Close transaction
+// --------------------------------------------------------
+func (tr *Transaction) Close () {
+	tr.Validate()
+/*
+	if tr.Validate() {
+		return "Success: Transaction closed.", nil
+	} else {
+		return "", errors.New("Validation error")
+	}
+*/
 }

@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-    "bytes"
-	"encoding/gob"
-	"crypto/sha256"
+
 )
 
 // -------------------------------------
@@ -12,7 +10,8 @@ import (
 // -------------------------------------
 type Block struct {
 	prev *Block
-	cell Cell
+	Tx Transaction
+	PrevTxHash [32]byte
 	next *Block
 }
 
@@ -24,56 +23,27 @@ type BlockChain struct {
 	end   *Block
 }
 
-
-func (bc *BlockChain) Init (trx Transaction) {
-	var c = Cell{}
-	c.Trx = trx
-	newBlock := &Block{cell: c}
-	bc.start = newBlock
-	bc.end = newBlock
-}
-
-func (bc *BlockChain) serializeCell (c Cell, buff *bytes.Buffer) {
-	// Cria o buffer o e encoder para a serialização
-	//var buff bytes.Buffer
+/*
+func (bc *BlockChain) serializeTx (t Transaction, buff *bytes.Buffer) {
 	enc := gob.NewEncoder(buff)
-	enc.Encode(c)
-	//serialized := buff.Bytes()
-	//fmt.Println ("Estrutura serializada:", serialized)
+	enc.Encode(t)
 }
-
-// --------------------------------------------
-// computeHash(): Calcula o hash de uma celula
-// --------------------------------------------
-func (bc *BlockChain) computeHash (cell Cell) [32]uint8 {
-	// Serializa celula e calcula seu hash...
-	var buff bytes.Buffer
-	bc.serializeCell(cell, &buff)
-	sc := buff.Bytes()
-	h := sha256.Sum256( sc )
-
-	return h
-}
+*/
 
 
 // --------------------------------------------
 // BlockChain::Append() -
 // --------------------------------------------
-func (bc *BlockChain) Append (c Cell) {
-	newBlock := &Block{cell: c}
-	var pHash [32]uint8		// previous hash
+func (bc *BlockChain) Append (t Transaction) {
+	newBlock := &Block{Tx: t}
 	// Se BC vazia:
 	if bc.start == nil {
 		bc.start = newBlock
-		// Como não existe um bloco anterior ao primeiro,
-		// usaremos pHash vazio (todos os valores em 0).
-		newBlock.cell.SetPrevHash(pHash)
 	} else {
 		newBlock.prev = bc.end
 		bc.end.next = newBlock
-		// Calcula o hash da celula anterior
-		pHash = bc.computeHash(newBlock.prev.cell)
-		newBlock.cell.SetPrevHash(pHash)
+		// Compute previous tx hash
+		newBlock.PrevTxHash = newBlock.prev.Tx.computeHash()
 	}
 	bc.end = newBlock
 }
@@ -84,34 +54,35 @@ func (bc *BlockChain) Append (c Cell) {
 func (bc *BlockChain) Display() {
 	block := bc.start
 	for block != nil {
-		fmt.Println( "Tx Id: ", block.cell.Trx.GetId() )
-        //fmt.Printf( "Data hash: %x\n", block.cell.GetDataHash() )
-		//fmt.Printf( "Prev hash: %x\n", block.cell.GetPrevHash() )
-
+		fmt.Println( "Tx Id: ", block.Tx.GetId() )
 		block = block.next
 	}
 }
 
-func (bc *BlockChain) Validate() {
+func (bc *BlockChain) EvalChain() {
 	block := bc.start
 	count := 1
 	var h [32]uint8
 	var firstHash [32]uint8
 	for block != nil {
 		fmt.Printf ( "Bloco %d\n", count )
-		fmt.Printf ( "Data hash: %x\n", block.cell.GetTxHash() )
-		fmt.Printf ( "Prev hash: %x\n", block.cell.GetPrevHash() )
+		fmt.Printf ( "UUID: %s\n", block.Tx.GetId() )
+ 		
 		if (block.prev == nil) {
 			h = firstHash
 		} else {
-			h = bc.computeHash(block.prev.cell)
+			h = block.prev.Tx.computeHash()
 		}
+
+		fmt.Printf ( "Prev hash: %x\n", block.PrevTxHash )
 		fmt.Printf ( "Calc hash: %x\n", h )
-		if ( h == block.cell.GetPrevHash() ) {
+
+		if ( h == block.PrevTxHash ) {
 			fmt.Println ("Previous hash OK")
 		} else {
 			fmt.Println ("Error: Previous hash mismatch.")
 		}
+
 		block = block.next
 		count++
 		fmt.Println("--")
